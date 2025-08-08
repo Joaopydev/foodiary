@@ -1,0 +1,27 @@
+{
+  "name": "foodiary-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "serverless offline start --reloadHandler"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.152",
+    "@types/node": "^24.1.0",
+    "dotenv": "^17.2.1",
+    "drizzle-kit": "^0.31.4",
+    "esbuild": "^0.25.8",
+    "serverless-offline": "^14.4.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "drizzle-orm": "^0.44.4",
+    "zod": "^4.0.15"
+  }
+}
