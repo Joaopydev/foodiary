@@ -6,6 +6,9 @@ provider:
   region: us-east-1
   runtime: nodejs22.x
   architecture: arm64
+  environment:
+    DATABASE_URL: ${env:DATABASE_URL}
+    JWT_SECRET_KEY: ${env:JWT_SECRET_KEY}
 
 package:
   individually: true
@@ -16,14 +19,22 @@ plugins:
 functions:
   signin:
     handler: src/functions/signin.handler
+    timeout: 15
     events:
       - httpApi:
           path: /signin
           method: POST
-
   signup:
     handler: src/functions/signup.handler
+    timeout: 15
     events:
       - httpApi:
           path: /signup
           method: POST
+  me:
+    handler: src/functions/me.handler
+    timeout: 15
+    events:
+      - httpApi:
+          path: /me
+          method: GET
