@@ -9,6 +9,15 @@ provider:
   environment:
     DATABASE_URL: ${env:DATABASE_URL}
     JWT_SECRET_KEY: ${env:JWT_SECRET_KEY}
+    BUCKET_NAME: !Ref UploadsBucket
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource: !Sub "${UploadsBucket.Arn}/*"
+          # Resource: "${!GetAtt UploadsBucket.Arn}/*"
 
 package:
   individually: true
@@ -59,6 +68,14 @@ functions:
       - httpApi:
           path: /meals/{mealId}
           method: GET
+  fileUploadEvent:
+    handler: src/functions/fileUploadEvent.handler
+    events:
+      - s3:
+          bucket: !Ref UploadsBucket
+          event: s3:ObjectCreated:*
+          existing: true
+          forceDeploy: true
 
 resources:
   Resources:
@@ -66,3 +83,17 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: foodiary-uploads-service
+
+    MealsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: foodiary-meals-queue
+        VisibilityTimeout: 60
+        RedrivePolicy:
+          maxReceiveCount: 1
+          deadLetterTargetArn: !GetAtt MealsDLQ.Arn
+
+    MealsDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: foodiary-meals-dlq
